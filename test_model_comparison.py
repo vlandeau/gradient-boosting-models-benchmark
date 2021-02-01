@@ -11,7 +11,7 @@ numerical_target = pd.Series(np.random.normal(size=n_samples))
 categorical_target = pd.Series(np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples))
 
 
-def test_model_comparison_give_numerical_performance_with_regression():
+def test_model_comparison_give_non_null_performance_with_regression():
     # Given
     features = pd.DataFrame({
         "numeric_feature": np.random.normal(size=n_samples)
@@ -30,7 +30,7 @@ def test_model_comparison_give_numerical_performance_with_regression():
         assert_that(~np.isnan(training_time))
 
 
-def test_model_comparison_give_numerical_performance_and_categorical_feature():
+def test_model_comparison_give_non_null_performance_and_categorical_feature():
     # Given
     features = pd.DataFrame({
         "string_feature": np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples),
@@ -50,7 +50,7 @@ def test_model_comparison_give_numerical_performance_and_categorical_feature():
         assert_that(~np.isnan(training_time))
 
 
-def test_model_comparison_give_numerical_performance_with_classification():
+def test_model_comparison_give_non_null_performance_with_classification():
     # Given
     features = pd.DataFrame({
         "numeric_feature": np.random.normal(size=n_samples)
@@ -69,7 +69,7 @@ def test_model_comparison_give_numerical_performance_with_classification():
         assert_that(~np.isnan(training_time))
 
 
-def test_model_comparison_give_numerical_performance_with_null_numerical_feature():
+def test_model_comparison_give_non_null_performance_with_null_numerical_feature():
     # Given
     features = pd.DataFrame({
         "numeric_feature": list(np.random.normal(size=n_samples - 1)) + [None]
@@ -88,7 +88,7 @@ def test_model_comparison_give_numerical_performance_with_null_numerical_feature
         assert_that(~np.isnan(training_time))
 
 
-def test_model_comparison_give_numerical_performance_with_null_categorical_feature():
+def test_model_comparison_give_non_null_performance_with_null_categorical_feature():
     # Given
     features = pd.DataFrame({
         "string_feature": list(np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples - 1)) + [None],
