@@ -3,7 +3,7 @@ import numpy as np
 from hamcrest import assert_that
 from hamcrest.core.core import is_
 
-from model_comparison import ModelComparison, TaskNames
+from model_comparison import ModelComparison, TaskName
 
 n_samples = 20
 cross_validation_n_folds = 2
@@ -18,7 +18,7 @@ def test_model_comparison_give_non_null_performance_with_regression():
     })
 
     # When
-    model_comparison = ModelComparison(TaskNames.regression, cross_validation_n_folds, features, numerical_target)
+    model_comparison = ModelComparison(TaskName.regression, cross_validation_n_folds, features, numerical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
@@ -38,7 +38,7 @@ def test_model_comparison_give_non_null_performance_and_categorical_feature():
     }, dtype="category")
 
     # When
-    model_comparison = ModelComparison(TaskNames.regression, cross_validation_n_folds, features, numerical_target)
+    model_comparison = ModelComparison(TaskName.regression, cross_validation_n_folds, features, numerical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
@@ -57,7 +57,7 @@ def test_model_comparison_give_non_null_performance_with_classification():
     })
 
     # When
-    model_comparison = ModelComparison(TaskNames.classification, cross_validation_n_folds, features, categorical_target)
+    model_comparison = ModelComparison(TaskName.classification, cross_validation_n_folds, features, categorical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
@@ -76,7 +76,7 @@ def test_model_comparison_give_non_null_performance_with_null_numerical_feature(
     })
 
     # When
-    model_comparison = ModelComparison(TaskNames.classification, cross_validation_n_folds, features, categorical_target)
+    model_comparison = ModelComparison(TaskName.classification, cross_validation_n_folds, features, categorical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
@@ -95,7 +95,7 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
     }, dtype="category")
 
     # When
-    model_comparison = ModelComparison(TaskNames.regression, cross_validation_n_folds, features, numerical_target)
+    model_comparison = ModelComparison(TaskName.regression, cross_validation_n_folds, features, numerical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then

@@ -2,30 +2,30 @@ import time
 from enum import Enum
 from typing import Tuple, Dict
 
-from pandas.core.dtypes.common import is_numeric_dtype
-from sklearn.pipeline import Pipeline
-from category_encoders.cat_boost import CatBoostEncoder
 import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
+from category_encoders.cat_boost import CatBoostEncoder
 from lightgbm import LGBMClassifier, LGBMRegressor
-from sklearn.model_selection import cross_val_score
+from pandas.core.dtypes.common import is_numeric_dtype
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier, XGBRegressor
-from autogluon import TabularPrediction
 
 
-class TaskNames(Enum):
-    classification = "classification_task"
-    regression = "regression_task"
+class TaskName(Enum):
+    classification = "classification"
+    regression = "regression"
 
 
-class ModelNames(Enum):
+class ModelName(Enum):
     catboost = "catboost"
     xgboost = "xgboost"
     lightgbm = "lightgbm"
     xgboost_with_cat_encoder = "xgboost_with_cat_encoder"
     lightgbm_with_cat_encoder = "lightgbm_with_cat_encoder"
+    encoder = "encoder"
 
 
 class ModelComparison:
@@ -33,10 +33,12 @@ class ModelComparison:
     unknown_numeric_value = -1
 
     def __init__(self,
-                 task_name: TaskNames,
+                 task_name: TaskName,
                  cross_validation_n_folds: int,
                  features: pd.DataFrame,
-                 target: pd.Series):
+                 target: pd.Series,
+                 max_parameters_to_test_in_tuning: int = 50):
+        self.max_parameters_to_test_in_tuning = max_parameters_to_test_in_tuning
         self.task_name = task_name
         self.cross_validation_n_folds = cross_validation_n_folds
         numeric_features = set(features.select_dtypes("number").columns)
@@ -61,43 +63,63 @@ class ModelComparison:
         return {model_name: self._get_default_model_score_and_training_time(model_name)
                 for model_name in self.models_to_compare.keys()}
 
-    def _get_default_model_score_and_training_time(self, model_name: ModelNames) -> Tuple[float, float]:
+    def _get_default_model_score_and_training_time(self, model_name: ModelName) -> Tuple[float, float]:
         model = self.models_to_compare[model_name][self.task_name]
 
         start_time = time.time()
         cross_val_scores = cross_val_score(model,
                                            self.features,
                                            self.target,
-                                           cv=self.cross_validation_n_folds,
+                                           cv=KFold(self.cross_validation_n_folds,
+                                                    shuffle=True),
                                            n_jobs=-1)
         end_time = time.time()
         return np.mean(cross_val_scores), end_time - start_time
 
     @property
-    def models_to_compare(self) -> Dict[ModelNames, Dict[TaskNames, object]]:
+    def models_to_compare(self) -> Dict[ModelName, Dict[TaskName, Pipeline]]:
         return {
-            ModelNames.catboost: {
-                TaskNames.classification: CatBoostClassifier(cat_features=self.categorical_features_indices),
-                TaskNames.regression: CatBoostRegressor(cat_features=self.categorical_features_indices)
+            ModelName.catboost: {
+                TaskName.classification: Pipeline([(ModelName.catboost.value,
+                                                    CatBoostClassifier(cat_features=self.categorical_features_indices,
+                                                                       verbose=0))]),
+                TaskName.regression: Pipeline([(ModelName.catboost.value,
+                                                CatBoostRegressor(cat_features=self.categorical_features_indices,
+                                                                  verbose=0))])
             },
-            ModelNames.lightgbm: {
-                TaskNames.classification: LGBMClassifier(categorical_features=self.categorical_features_indices),
-                TaskNames.regression: LGBMRegressor(categorical_features=self.categorical_features_indices)
+            ModelName.lightgbm: {
+                TaskName.classification: Pipeline([(ModelName.lightgbm.value,
+                                                    LGBMClassifier(
+                                                        categorical_features=self.categorical_features_indices,
+                                                        verbose=-1, verbose_eval=-1))]),
+                TaskName.regression: Pipeline([(ModelName.lightgbm.value,
+                                                LGBMRegressor(categorical_features=self.categorical_features_indices,
+                                                              verbose=-1,
+                                                              verbose_eval=-1))])
             },
-            ModelNames.lightgbm_with_cat_encoder: {
-                TaskNames.classification: Pipeline([("encoder", CatBoostEncoder()),
-                                                    ("lightgbm", LGBMClassifier())]),
-                TaskNames.regression: Pipeline([("encoder", CatBoostEncoder()),
-                                                ("lightgbm", LGBMRegressor())]),
+            ModelName.lightgbm_with_cat_encoder: {
+                TaskName.classification: Pipeline(
+                    [(ModelName.encoder.value, CatBoostEncoder(cols=self.categorical_features,
+                                                               verbose=0)),
+                     (ModelName.lightgbm.value, LGBMClassifier(verbosie=-1,
+                                                               verbose_eval=-1))]),
+                TaskName.regression: Pipeline([(ModelName.encoder.value, CatBoostEncoder(cols=self.categorical_features,
+                                                                                         verbose=-1)),
+                                               (ModelName.lightgbm.value, LGBMRegressor(verbose=-1,
+                                                                                        verbose_eval=-1))]),
             },
-            ModelNames.xgboost: {
-                TaskNames.classification: XGBClassifier(),
-                TaskNames.regression: XGBRegressor()
+            ModelName.xgboost: {
+                TaskName.classification: Pipeline([(ModelName.xgboost.value, XGBClassifier())]),
+                TaskName.regression: Pipeline([(ModelName.xgboost.value, XGBRegressor())])
             },
-            ModelNames.xgboost_with_cat_encoder: {
-                TaskNames.classification: Pipeline([("encoder", CatBoostEncoder(cols=self.categorical_features)),
-                                                    ("xgboost", XGBClassifier())]),
-                TaskNames.regression: Pipeline([("encoder", CatBoostEncoder(cols=self.categorical_features)),
-                                                ("xgboost", XGBRegressor())]),
+            ModelName.xgboost_with_cat_encoder: {
+                TaskName.classification: Pipeline(
+                    [(ModelName.encoder.value, CatBoostEncoder(cols=self.categorical_features,
+                                                               verbose=0)),
+                     (ModelName.xgboost.value, XGBClassifier())]),
+                TaskName.regression: Pipeline(
+                    [(ModelName.encoder.value, CatBoostEncoder(cols=self.categorical_features,
+                                                               verbose=0)),
+                     (ModelName.xgboost.value, XGBRegressor())]),
             }
         }
