@@ -60,7 +60,7 @@ class ModelComparison:
         else:
             self.target = LabelEncoder().fit_transform(target)
 
-    def get_default_models_scores_and_training_time(self) -> Dict:
+    def get_default_models_scores_and_training_time(self) -> Dict[ModelName, Tuple[float, float]]:
         return {model_name: self._get_default_model_score_and_training_time(model_name)
                 for model_name in tqdm.tqdm(self.models_to_compare.keys())}
 

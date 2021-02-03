@@ -1,13 +1,13 @@
-from typing import Dict, Callable
+from typing import Dict, Callable, Union
 
 from optuna import Trial
 
-from model_comparison import ModelName
+from comparison.model_comparison import ModelName
 
 
 class TuningParameters:
 
-    def get_model_params(self, model_name: ModelName) -> Callable[[Trial], Dict]:
+    def get_model_params(self, model_name: ModelName) -> Callable[[Trial], Dict[str, Union[int, float, str]]]:
         return {
             ModelName.catboost: self.get_catboost_params(f"{ModelName.catboost.value}__"),
             ModelName.xgboost: self.get_xgboost_params(f"{ModelName.xgboost.value}__"),
@@ -17,7 +17,7 @@ class TuningParameters:
         }[model_name]
 
     @staticmethod
-    def get_lightgbm_params(model_step_in_pipeline: str = "") -> Callable[[Trial], Dict]:
+    def get_lightgbm_params(model_step_in_pipeline: str = "") -> Callable[[Trial], Dict[str, Union[int, float, str]]]:
         return lambda trial: {
             f"{model_step_in_pipeline}boosting_type": trial.suggest_categorical('boosting_type', ["gbdt", "dart", "goss"]),
             f"{model_step_in_pipeline}num_leaves": trial.suggest_int('num_leaves', 30, 150),
@@ -31,7 +31,7 @@ class TuningParameters:
         }
 
     @staticmethod
-    def get_catboost_params(model_step_in_pipeline: str = "") -> Callable[[Trial], Dict]:
+    def get_catboost_params(model_step_in_pipeline: str = "") -> Callable[[Trial], Dict[str, Union[int, float, str]]]:
         return lambda trial: {
             f"{model_step_in_pipeline}depth": trial.suggest_int("depth", 1, 12),
             f"{model_step_in_pipeline}border_count": trial.suggest_int("border_count", 32, 255),
@@ -40,7 +40,7 @@ class TuningParameters:
         }
 
     @staticmethod
-    def get_xgboost_params(model_step_in_pipeline: str = "") -> Callable[[Trial], Dict]:
+    def get_xgboost_params(model_step_in_pipeline: str = "") -> Callable[[Trial], Dict[str, Union[int, float, str]]]:
         return lambda trial: {
             f"{model_step_in_pipeline}max_depth" : trial.suggest_int("max_depth", 2, 30),
             f"{model_step_in_pipeline}booster": trial.suggest_categorical("booster", ["gbtree", "gblinear", "dart"]),

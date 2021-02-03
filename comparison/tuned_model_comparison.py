@@ -7,8 +7,8 @@ from optuna import Trial
 from optuna.integration.sklearn import BaseEstimator
 from sklearn.model_selection import cross_val_score
 
-from model_comparison import ModelComparison, ModelName
-from tuning_parameters import TuningParameters
+from comparison.model_comparison import ModelComparison, ModelName
+from comparison.tuning_parameters import TuningParameters
 
 
 class TunedModelComparison(ModelComparison):

@@ -22,12 +22,12 @@ def test_model_comparison_give_non_null_performance_with_regression():
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
-    for performance_and_training_time in comparison.values():
-        assert_that(len(performance_and_training_time), is_(2))
+    for model_name, performance_and_training_time in comparison.items():
+        assert_that(len(performance_and_training_time), is_(2),
+                    reason=f"Insufficiant metric count for model {model_name}")
         performance = performance_and_training_time[0]
-        training_time = performance_and_training_time[1]
-        assert_that(~np.isnan(performance))
-        assert_that(~np.isnan(training_time))
+        assert_that(~np.isnan(performance),
+                    reason=f"Null performance value for model {model_name}")
 
 
 def test_model_comparison_give_non_null_performance_and_categorical_feature():
@@ -42,12 +42,12 @@ def test_model_comparison_give_non_null_performance_and_categorical_feature():
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
-    for performance_and_training_time in comparison.values():
-        assert_that(len(performance_and_training_time), is_(2))
+    for model_name, performance_and_training_time in comparison.items():
+        assert_that(len(performance_and_training_time), is_(2),
+                    reason=f"Insufficiant metric count for model {model_name}")
         performance = performance_and_training_time[0]
-        training_time = performance_and_training_time[1]
-        assert_that(~np.isnan(performance))
-        assert_that(~np.isnan(training_time))
+        assert_that(~np.isnan(performance),
+                    reason=f"Null performance value for model {model_name}")
 
 
 def test_model_comparison_give_non_null_performance_with_classification():
@@ -61,12 +61,12 @@ def test_model_comparison_give_non_null_performance_with_classification():
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
-    for performance_and_training_time in comparison.values():
-        assert_that(len(performance_and_training_time), is_(2))
+    for model_name, performance_and_training_time in comparison.items():
+        assert_that(len(performance_and_training_time), is_(2),
+                    reason=f"Insufficiant metric count for model {model_name}")
         performance = performance_and_training_time[0]
-        training_time = performance_and_training_time[1]
-        assert_that(~np.isnan(performance))
-        assert_that(~np.isnan(training_time))
+        assert_that(~np.isnan(performance),
+                    reason=f"Null performance value for model {model_name}")
 
 
 def test_model_comparison_give_non_null_performance_with_null_numerical_feature():
@@ -80,12 +80,12 @@ def test_model_comparison_give_non_null_performance_with_null_numerical_feature(
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
-    for performance_and_training_time in comparison.values():
-        assert_that(len(performance_and_training_time), is_(2))
+    for model_name, performance_and_training_time in comparison.items():
+        assert_that(len(performance_and_training_time), is_(2),
+                    reason=f"Insufficiant metric count for model {model_name}")
         performance = performance_and_training_time[0]
-        training_time = performance_and_training_time[1]
-        assert_that(~np.isnan(performance))
-        assert_that(~np.isnan(training_time))
+        assert_that(~np.isnan(performance),
+                    reason=f"Null performance value for model {model_name}")
 
 
 def test_model_comparison_give_non_null_performance_with_null_categorical_feature():
@@ -99,9 +99,9 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
-    for performance_and_training_time in comparison.values():
-        assert_that(len(performance_and_training_time), is_(2))
+    for model_name, performance_and_training_time in comparison.items():
+        assert_that(len(performance_and_training_time), is_(2),
+                    reason=f"Insufficiant metric count for model {model_name}")
         performance = performance_and_training_time[0]
-        training_time = performance_and_training_time[1]
-        assert_that(~np.isnan(performance))
-        assert_that(~np.isnan(training_time))
+        assert_that(~np.isnan(performance),
+                    reason=f"Null performance value for model {model_name}")
