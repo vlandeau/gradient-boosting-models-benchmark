@@ -2,7 +2,7 @@ from typing import Dict, Callable
 
 from optuna import Trial
 
-from comparison.model_comparison import ModelName
+from model_comparison import ModelName
 
 
 class TuningParameters:
