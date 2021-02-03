@@ -3,7 +3,7 @@ import numpy as np
 from hamcrest import assert_that
 from hamcrest.core.core import is_
 
-from model_comparison import ModelComparison, TaskName
+from comparison.model_comparison import ModelComparison, TaskName
 
 n_samples = 20
 cross_validation_n_folds = 2

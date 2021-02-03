@@ -3,17 +3,12 @@ from typing import Tuple, Dict
 
 import numpy as np
 import optuna
-from catboost import CatBoostClassifier, CatBoostRegressor
-from category_encoders.cat_boost import CatBoostEncoder
-from lightgbm import LGBMClassifier, LGBMRegressor
 from optuna import Trial
 from optuna.integration.sklearn import BaseEstimator
 from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import Pipeline
-from xgboost import XGBClassifier, XGBRegressor
 
-from model_comparison import TaskName, ModelComparison, ModelName
-from tuning_parameters import TuningParameters
+from comparison.model_comparison import ModelComparison, ModelName
+from comparison.tuning_parameters import TuningParameters
 
 
 class TunedModelComparison(ModelComparison):

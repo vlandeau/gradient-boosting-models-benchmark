@@ -3,8 +3,8 @@ import numpy as np
 from hamcrest import assert_that
 from hamcrest.core.core import is_
 
-from model_comparison import TaskName
-from tuned_model_comparison import TunedModelComparison
+from comparison.model_comparison import TaskName
+from comparison.tuned_model_comparison import TunedModelComparison
 
 
 def test_model_comparison_give_non_null_performance_with_regression():

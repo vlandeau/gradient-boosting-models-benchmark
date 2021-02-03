@@ -12,6 +12,7 @@ from sklearn.model_selection import cross_val_score, KFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier, XGBRegressor
+import tqdm
 
 
 class TaskName(Enum):
@@ -61,7 +62,7 @@ class ModelComparison:
 
     def get_default_models_scores_and_training_time(self) -> Dict:
         return {model_name: self._get_default_model_score_and_training_time(model_name)
-                for model_name in self.models_to_compare.keys()}
+                for model_name in tqdm.tqdm(self.models_to_compare.keys())}
 
     def _get_default_model_score_and_training_time(self, model_name: ModelName) -> Tuple[float, float]:
         model = self.models_to_compare[model_name][self.task_name]
