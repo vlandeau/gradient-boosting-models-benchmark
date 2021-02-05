@@ -26,7 +26,7 @@ class TunedModelComparison(ModelComparison):
         def objective(trial: Trial) -> float:
             grid_params: Dict = TuningParameters().get_model_params(model_name)(trial)
             model.set_params(**grid_params)
-            return np.mean(cross_val_score(model, self.features, self.target,
+            return np.mean(cross_val_score(model, self.preprocessed_features, self.target,
                                            cv=self.cross_validation_n_folds))
 
         study = optuna.create_study(direction="maximize")

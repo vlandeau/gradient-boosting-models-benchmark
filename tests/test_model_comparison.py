@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-from hamcrest import assert_that
+from hamcrest import assert_that, is_
 
 from comparison.model_comparison import ModelComparison, TaskName, MODEL_SCORE
+
 
 n_samples = 20
 cross_validation_n_folds = 2
@@ -94,3 +95,25 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
         performance = performance_and_training_time[MODEL_SCORE]
         assert_that(~np.isnan(performance),
                     reason=f"Null performance value for model {model_name}")
+
+
+def test_encode_datetime_columns_as_int():
+    # Given
+    date_column = "date_column"
+    other_string_column = "other_string_column"
+    other_numeric_column = "other_numeric_column"
+
+    df = pd.DataFrame({date_column: ['2017-02-04 18:41:00'],
+                       other_numeric_column: [1],
+                       other_string_column: ["something"]})
+
+    # When
+    parsed_df = ModelComparison._encode_date_columns_as_int(df, 1)
+
+    # Then
+    parsed_df_dtypes = parsed_df.dtypes
+    df_dtypes = df.dtypes
+
+    assert_that(parsed_df_dtypes[date_column], is_("float"))
+    assert_that(parsed_df_dtypes[other_string_column], is_(df_dtypes[other_string_column]))
+    assert_that(parsed_df_dtypes[other_numeric_column], is_(df_dtypes[other_numeric_column]))
