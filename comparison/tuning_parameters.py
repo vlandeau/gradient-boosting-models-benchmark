@@ -32,9 +32,11 @@ class TuningParameters:
     @staticmethod
     def get_catboost_params(model_step_in_pipeline: str = "") -> Callable[[Trial], Dict[str, Union[int, float, str]]]:
         return lambda trial: {
-            f"{model_step_in_pipeline}depth": trial.suggest_int("depth", 1, 12),
+            f"{model_step_in_pipeline}depth": trial.suggest_int("depth", 1, 16),
+            f"{model_step_in_pipeline}n_estimators": trial.suggest_int("n_estimators", 10, 1000),
             f"{model_step_in_pipeline}border_count": trial.suggest_int("border_count", 32, 255),
             f"{model_step_in_pipeline}learning_rate": trial.suggest_float('learning_rate', 0.001, 0.2),
+            f"{model_step_in_pipeline}colsample_bylevel": trial.suggest_float('colsample_bylevel', 0.1, 1.0),
             f"{model_step_in_pipeline}l2_leaf_reg": trial.suggest_float('l2_leaf_reg', 0, 10)
         }
 

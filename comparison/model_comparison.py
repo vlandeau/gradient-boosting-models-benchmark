@@ -14,6 +14,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier, XGBRegressor
 
+DEFAULT_PARAMETERS = "default_parameters"
+
 TRAINING_TIME = "training_time"
 
 MODEL_SCORE = "model_score"
@@ -64,12 +66,10 @@ class ModelComparison:
             self.target = LabelEncoder().fit_transform(target)
 
     def get_default_models_scores_and_training_time(self) -> Dict[ModelName, Dict[str, object]]:
-        #with Pool(processes=4) as pool:
-        #    results = pool.map(self._get_default_model_score_and_training_time, self.models_to_compare.keys())
-        #return {model_name: performance_and_time for model_name, performance_and_time
-        #        in zip(self.models_to_compare.keys(), results)}
-        return {model_name: self._get_default_model_score_and_training_time(model_name) for model_name
-                in self.models_to_compare.keys()}
+        with Pool(processes=4) as pool:
+            results = pool.map(self._get_default_model_score_and_training_time, self.models_to_compare.keys())
+        return {model_name: performance_and_time for model_name, performance_and_time
+                in zip(self.models_to_compare.keys(), results)}
 
     def _get_default_model_score_and_training_time(self, model_name: ModelName) -> Dict[str, object]:
         model = self.models_to_compare[model_name][self.task_name]
@@ -83,7 +83,8 @@ class ModelComparison:
                                            n_jobs=-1)
         end_time = time.time()
         return {MODEL_SCORE: np.mean(cross_val_scores),
-                TRAINING_TIME: end_time - start_time}
+                TRAINING_TIME: end_time - start_time,
+                DEFAULT_PARAMETERS: model.get_params(deep=True)}
 
     @property
     def models_to_compare(self) -> Dict[ModelName, Dict[TaskName, Pipeline]]:
