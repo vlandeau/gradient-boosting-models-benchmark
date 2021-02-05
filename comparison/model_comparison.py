@@ -20,12 +20,12 @@ TRAINING_TIME = "training_time"
 MODEL_SCORE = "model_score"
 
 
-class TaskName(Enum):
+class TaskName(str, Enum):
     CLASSIFICATION = "classification"
     REGRESSION = "regression"
 
 
-class ModelName(Enum):
+class ModelName(str, Enum):
     CATBOOST = "catboost"
     XGBOOST = "xgboost"
     LIGHTGBM = "lightgbm"

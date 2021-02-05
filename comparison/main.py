@@ -50,12 +50,12 @@ def get_comparison_datasets() -> Dict:
                                       "features": hill_valley.data,
                                       "target": hill_valley.target,
                                       "cv": 8}
-    cars = pd.read_csv("cars.csv")
-    cars_target = "duration_listed"
-    datasets_information['cars'] = {"task": TaskName.REGRESSION,
-                                    "features": cars.drop(columns=cars_target),
-                                    "target": cars[cars_target],
-                                    "cv": 4}
+    #cars = pd.read_csv("cars.csv")
+    #cars_target = "duration_listed"
+    #datasets_information['cars'] = {"task": TaskName.REGRESSION,
+    #                                "features": cars.drop(columns=cars_target),
+    #                                "target": cars[cars_target],
+    #                                "cv": 4}
     return datasets_information
 
 
@@ -78,10 +78,10 @@ def get_comparison_tuned_models(dataset_infos):
 if __name__ == "__main__":
     comparison_datasets = get_comparison_datasets()
 
-    perf_comparisons = {dataset_name: get_comparison_default_models(comparison_datasets[dataset_name])
-                        for dataset_name in comparison_datasets.keys()}
-    with open("perf_comparison", "w") as default_performances_output_stream:
-        default_performances_output_stream.write(str(perf_comparisons))
+    #perf_comparisons = {dataset_name: get_comparison_default_models(comparison_datasets[dataset_name])
+    #                    for dataset_name in comparison_datasets.keys()}
+    #with open("perf_comparison", "w") as default_performances_output_stream:
+    #    default_performances_output_stream.write(str(perf_comparisons))
 
     tuned_perf_comparisons = {dataset_name: get_comparison_tuned_models(comparison_datasets[dataset_name])
                               for dataset_name in tqdm(comparison_datasets.keys())}
