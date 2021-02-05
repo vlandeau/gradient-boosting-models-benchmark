@@ -1,9 +1,8 @@
 import pandas as pd
 import numpy as np
 from hamcrest import assert_that
-from hamcrest.core.core import is_
 
-from comparison.model_comparison import ModelComparison, TaskName
+from comparison.model_comparison import ModelComparison, TaskName, MODEL_SCORE
 
 n_samples = 20
 cross_validation_n_folds = 2
@@ -18,14 +17,12 @@ def test_model_comparison_give_non_null_performance_with_regression():
     })
 
     # When
-    model_comparison = ModelComparison(TaskName.regression, cross_validation_n_folds, features, numerical_target)
+    model_comparison = ModelComparison(TaskName.REGRESSION, cross_validation_n_folds, features, numerical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
-        assert_that(len(performance_and_training_time), is_(2),
-                    reason=f"Insufficiant metric count for model {model_name}")
-        performance = performance_and_training_time[0]
+        performance = performance_and_training_time[MODEL_SCORE]
         assert_that(~np.isnan(performance),
                     reason=f"Null performance value for model {model_name}")
 
@@ -38,14 +35,12 @@ def test_model_comparison_give_non_null_performance_and_categorical_feature():
     }, dtype="category")
 
     # When
-    model_comparison = ModelComparison(TaskName.regression, cross_validation_n_folds, features, numerical_target)
+    model_comparison = ModelComparison(TaskName.REGRESSION, cross_validation_n_folds, features, numerical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
-        assert_that(len(performance_and_training_time), is_(2),
-                    reason=f"Insufficiant metric count for model {model_name}")
-        performance = performance_and_training_time[0]
+        performance = performance_and_training_time[MODEL_SCORE]
         assert_that(~np.isnan(performance),
                     reason=f"Null performance value for model {model_name}")
 
@@ -57,14 +52,12 @@ def test_model_comparison_give_non_null_performance_with_classification():
     })
 
     # When
-    model_comparison = ModelComparison(TaskName.classification, cross_validation_n_folds, features, categorical_target)
+    model_comparison = ModelComparison(TaskName.CLASSIFICATION, cross_validation_n_folds, features, categorical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
-        assert_that(len(performance_and_training_time), is_(2),
-                    reason=f"Insufficiant metric count for model {model_name}")
-        performance = performance_and_training_time[0]
+        performance = performance_and_training_time[MODEL_SCORE]
         assert_that(~np.isnan(performance),
                     reason=f"Null performance value for model {model_name}")
 
@@ -76,14 +69,12 @@ def test_model_comparison_give_non_null_performance_with_null_numerical_feature(
     })
 
     # When
-    model_comparison = ModelComparison(TaskName.classification, cross_validation_n_folds, features, categorical_target)
+    model_comparison = ModelComparison(TaskName.CLASSIFICATION, cross_validation_n_folds, features, categorical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
-        assert_that(len(performance_and_training_time), is_(2),
-                    reason=f"Insufficiant metric count for model {model_name}")
-        performance = performance_and_training_time[0]
+        performance = performance_and_training_time[MODEL_SCORE]
         assert_that(~np.isnan(performance),
                     reason=f"Null performance value for model {model_name}")
 
@@ -95,13 +86,11 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
     }, dtype="category")
 
     # When
-    model_comparison = ModelComparison(TaskName.regression, cross_validation_n_folds, features, numerical_target)
+    model_comparison = ModelComparison(TaskName.REGRESSION, cross_validation_n_folds, features, numerical_target)
     comparison = model_comparison.get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
-        assert_that(len(performance_and_training_time), is_(2),
-                    reason=f"Insufficiant metric count for model {model_name}")
-        performance = performance_and_training_time[0]
+        performance = performance_and_training_time[MODEL_SCORE]
         assert_that(~np.isnan(performance),
                     reason=f"Null performance value for model {model_name}")

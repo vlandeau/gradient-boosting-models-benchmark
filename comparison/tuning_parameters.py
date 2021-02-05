@@ -9,11 +9,10 @@ class TuningParameters:
 
     def get_model_params(self, model_name: ModelName) -> Callable[[Trial], Dict[str, Union[int, float, str]]]:
         return {
-            ModelName.catboost: self.get_catboost_params(f"{ModelName.catboost.value}__"),
-            ModelName.xgboost: self.get_xgboost_params(f"{ModelName.xgboost.value}__"),
-            ModelName.lightgbm: self.get_lightgbm_params(f"{ModelName.lightgbm.value}__"),
-            ModelName.xgboost_with_cat_encoder: self.get_xgboost_params(f"{ModelName.xgboost.value}__"),
-            ModelName.lightgbm_with_cat_encoder: self.get_lightgbm_params(f"{ModelName.lightgbm.value}__")
+            ModelName.CATBOOST: self.get_catboost_params(f"{ModelName.CATBOOST.value}__"),
+            ModelName.XGBOOST: self.get_xgboost_params(f"{ModelName.XGBOOST.value}__"),
+            ModelName.LIGHTGBM: self.get_lightgbm_params(f"{ModelName.LIGHTGBM.value}__"),
+            ModelName.LIGHTGBM_WITH_CATBOOST_ENCODER: self.get_lightgbm_params(f"{ModelName.LIGHTGBM.value}__")
         }[model_name]
 
     @staticmethod
