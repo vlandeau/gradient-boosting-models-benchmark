@@ -31,7 +31,7 @@ class TunedModelComparison(ModelComparison):
 
         study = optuna.create_study(direction="maximize")
         try:
-            study.optimize(objective, n_trials=self.max_parameters_to_test_in_tuning)
+            study.optimize(objective, n_trials=self.max_parameters_to_test_in_tuning, n_jobs=2)
             return {MODEL_SCORE: study.best_value,
                     BEST_PARAMETERS: str(study.best_params)}
         except Exception as e:

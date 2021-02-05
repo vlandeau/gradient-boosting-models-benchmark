@@ -1,6 +1,5 @@
 import time
 from enum import Enum
-from multiprocessing import Pool
 from typing import Dict
 
 import numpy as np
@@ -70,10 +69,8 @@ class ModelComparison:
                      for numeric_feature in numeric_features})
 
     def get_default_models_scores_and_training_time(self) -> Dict[ModelName, Dict[str, object]]:
-        with Pool(processes=4) as pool:
-            results = pool.map(self._get_default_model_score_and_training_time, self.models_to_compare.keys())
-        return {model_name: performance_and_time for model_name, performance_and_time
-                in zip(self.models_to_compare.keys(), results)}
+        return {model_name: self._get_default_model_score_and_training_time(model_name)
+                for model_name in self.models_to_compare.keys()}
 
     def _get_default_model_score_and_training_time(self, model_name: ModelName) -> Dict[str, object]:
         model = self.models_to_compare[model_name][self.task_name]
