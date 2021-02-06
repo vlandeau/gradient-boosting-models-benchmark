@@ -59,7 +59,8 @@ def get_comparison_datasets() -> Dict:
     return datasets_information
 
 
-def get_comparison_default_models(dataset_infos):
+def get_comparison_default_models(dataset_infos, dataset_name):
+    print(f"Processing {dataset_name} dataset")
     comparison = ModelComparison(task_name=dataset_infos["task"],
                                  cross_validation_n_folds=dataset_infos["cv"],
                                  features=dataset_infos["features"],
@@ -67,7 +68,8 @@ def get_comparison_default_models(dataset_infos):
     return comparison.get_default_models_scores_and_training_time()
 
 
-def get_comparison_tuned_models(dataset_infos):
+def get_comparison_tuned_models(dataset_infos, dataset_name):
+    print(f"Processing {dataset_name} dataset")
     comparison = TunedModelComparison(task_name=dataset_infos["task"],
                                       cross_validation_n_folds=dataset_infos["cv"],
                                       features=dataset_infos["features"],
@@ -78,12 +80,12 @@ def get_comparison_tuned_models(dataset_infos):
 if __name__ == "__main__":
     comparison_datasets = get_comparison_datasets()
 
-    perf_comparisons = {dataset_name: get_comparison_default_models(comparison_datasets[dataset_name])
+    perf_comparisons = {dataset_name: get_comparison_default_models(comparison_datasets[dataset_name], dataset_name)
                         for dataset_name in comparison_datasets.keys()}
     with open("perf_comparison", "w") as default_performances_output_stream:
         default_performances_output_stream.write(str(perf_comparisons))
 
-    tuned_perf_comparisons = {dataset_name: get_comparison_tuned_models(comparison_datasets[dataset_name])
+    tuned_perf_comparisons = {dataset_name: get_comparison_tuned_models(comparison_datasets[dataset_name], dataset_name)
                               for dataset_name in tqdm(comparison_datasets.keys())}
     with open("tuned_perf_comparisons", "w") as tuned_performances_output_stream:
         tuned_performances_output_stream.write(str(tuned_perf_comparisons))

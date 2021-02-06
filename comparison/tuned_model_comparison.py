@@ -27,7 +27,7 @@ class TunedModelComparison(ModelComparison):
             grid_params: Dict = TuningParameters().get_model_params(model_name)(trial)
             model.set_params(**grid_params)
             return np.mean(cross_val_score(model, self.preprocessed_features, self.target,
-                                           n_jobs=-1, cv=self.cross_validation_n_folds))
+                                           n_jobs=4, cv=self.cross_validation_n_folds))
 
         study = optuna.create_study(direction="maximize")
         try:
