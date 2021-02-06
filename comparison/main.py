@@ -50,12 +50,12 @@ def get_comparison_datasets() -> Dict:
                                       "features": hill_valley.data,
                                       "target": hill_valley.target,
                                       "cv": 8}
-    #cars = pd.read_csv("cars.csv")
-    #cars_target = "duration_listed"
-    #datasets_information['cars'] = {"task": TaskName.REGRESSION,
-    #                                "features": cars.drop(columns=cars_target),
-    #                                "target": cars[cars_target],
-    #                                "cv": 4}
+    cars = pd.read_csv("cars.csv")
+    cars_target = "duration_listed"
+    datasets_information['cars'] = {"task": TaskName.REGRESSION,
+                                    "features": cars.drop(columns=cars_target),
+                                    "target": cars[cars_target],
+                                    "cv": 4}
     return datasets_information
 
 
