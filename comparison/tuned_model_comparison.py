@@ -27,11 +27,11 @@ class TunedModelComparison(ModelComparison):
             grid_params: Dict = TuningParameters().get_model_params(model_name)(trial)
             model.set_params(**grid_params)
             return np.mean(cross_val_score(model, self.preprocessed_features, self.target,
-                                           cv=self.cross_validation_n_folds))
+                                           n_jobs=-1, cv=self.cross_validation_n_folds))
 
         study = optuna.create_study(direction="maximize")
         try:
-            study.optimize(objective, n_trials=self.max_parameters_to_test_in_tuning, n_jobs=2)
+            study.optimize(objective, n_trials=self.max_parameters_to_test_in_tuning)
             return {MODEL_SCORE: study.best_value,
                     BEST_PARAMETERS: str(study.best_params)}
         except Exception as e:

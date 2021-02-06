@@ -5,12 +5,12 @@ from hamcrest import assert_that
 from comparison.model_comparison import TaskName, MODEL_SCORE
 from comparison.tuned_model_comparison import TunedModelComparison
 
+n_samples = 20
 numerical_target = pd.Series(np.random.normal(size=n_samples))
 
 
 def test_model_comparison_give_non_null_performance_with_regression_and_numerial_feature():
     # Given
-    n_samples = 20
     cross_validation_n_folds = 2
     features = pd.DataFrame({
         "numeric_feature": np.random.normal(size=n_samples)
@@ -29,7 +29,6 @@ def test_model_comparison_give_non_null_performance_with_regression_and_numerial
 
 def test_model_comparison_give_non_null_performance_with_regression_and_categorical_feature():
     # Given
-    n_samples = 20
     cross_validation_n_folds = 2
     features = pd.DataFrame({
         "string_feature": list(np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples - 1)) + [None],
