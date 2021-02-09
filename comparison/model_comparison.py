@@ -1,6 +1,6 @@
 import time
 from enum import Enum
-from typing import Dict
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -58,7 +58,7 @@ class ModelComparison:
         else:
             self.target = LabelEncoder().fit_transform(target)
 
-    def _encode_features(self, features, numeric_features) -> pd.DataFrame:
+    def _encode_features(self, features: pd.DataFrame, numeric_features: List) -> pd.DataFrame:
         encoded_categorical_features = {
             categorical_feature:
                 LabelEncoder().fit_transform(features[categorical_feature].astype(str).fillna(self.unknown_category))

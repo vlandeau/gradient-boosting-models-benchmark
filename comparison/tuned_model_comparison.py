@@ -5,7 +5,7 @@ import numpy as np
 import optuna
 from optuna import Trial
 from optuna.integration.sklearn import BaseEstimator
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, KFold
 
 from comparison.model_comparison import ModelComparison, ModelName, MODEL_SCORE, TRAINING_TIME
 from comparison.tuning_parameters import TuningParameters
@@ -26,8 +26,11 @@ class TunedModelComparison(ModelComparison):
         def objective(trial: Trial) -> float:
             grid_params: Dict = TuningParameters().get_model_params(model_name)(trial)
             model.set_params(**grid_params)
-            return np.mean(cross_val_score(model, self.preprocessed_features, self.target,
-                                           n_jobs=4, cv=self.cross_validation_n_folds))
+            return np.mean(cross_val_score(model,
+                                           self.preprocessed_features, self.target,
+                                           n_jobs=4,
+                                           cv=KFold(self.cross_validation_n_folds,
+                                                    shuffle=True)))
 
         study = optuna.create_study(direction="maximize")
         try:

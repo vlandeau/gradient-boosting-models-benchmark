@@ -5,6 +5,7 @@ from sklearn import datasets
 from tqdm import tqdm
 from model_comparison import ModelComparison, TaskName
 from tuned_model_comparison import TunedModelComparison
+import json
 
 
 def get_comparison_datasets() -> Dict:
@@ -82,10 +83,10 @@ if __name__ == "__main__":
 
     perf_comparisons = {dataset_name: get_comparison_default_models(comparison_datasets[dataset_name], dataset_name)
                         for dataset_name in comparison_datasets.keys()}
-    with open("perf_comparison", "w") as default_performances_output_stream:
-        default_performances_output_stream.write(str(perf_comparisons))
+    with open("perf_comparison.json", "w") as default_performances_output_stream:
+        json.dump(perf_comparisons, default_performances_output_stream)
 
     tuned_perf_comparisons = {dataset_name: get_comparison_tuned_models(comparison_datasets[dataset_name], dataset_name)
                               for dataset_name in tqdm(comparison_datasets.keys())}
-    with open("tuned_perf_comparisons", "w") as tuned_performances_output_stream:
-        tuned_performances_output_stream.write(str(tuned_perf_comparisons))
+    with open("tuned_perf_comparisons.json", "w") as tuned_performances_output_stream:
+        json.dump(perf_comparisons, tuned_performances_output_stream)
