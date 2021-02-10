@@ -42,7 +42,7 @@ class ModelComparison:
                  cross_validation_n_folds: int,
                  features: pd.DataFrame,
                  target: pd.Series,
-                 max_parameters_to_test_in_tuning: int = 5):
+                 max_parameters_to_test_in_tuning: int = 25):
         self.max_parameters_to_test_in_tuning = max_parameters_to_test_in_tuning
         self.task_name = task_name
         self.cross_validation_n_folds = cross_validation_n_folds
@@ -85,8 +85,7 @@ class ModelComparison:
                                            fit_params=self.models_to_compare[model_name].get(FIT_PARAMS, None))
         end_time = time.time()
         return {MODEL_SCORE: np.mean(cross_val_scores),
-                TRAINING_TIME: end_time - start_time,
-                DEFAULT_PARAMETERS: model.get_params(deep=True)}
+                TRAINING_TIME: end_time - start_time}
 
     @property
     def models_to_compare(self) -> Dict[ModelName, Dict]:
