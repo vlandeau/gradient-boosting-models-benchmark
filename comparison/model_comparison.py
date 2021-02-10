@@ -42,7 +42,7 @@ class ModelComparison:
                  cross_validation_n_folds: int,
                  features: pd.DataFrame,
                  target: pd.Series,
-                 max_parameters_to_test_in_tuning: int = 50):
+                 max_parameters_to_test_in_tuning: int = 5):
         self.max_parameters_to_test_in_tuning = max_parameters_to_test_in_tuning
         self.task_name = task_name
         self.cross_validation_n_folds = cross_validation_n_folds
