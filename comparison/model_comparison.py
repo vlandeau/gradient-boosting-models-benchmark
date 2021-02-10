@@ -1,6 +1,6 @@
 import time
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, Set
 
 import numpy as np
 import pandas as pd
@@ -13,16 +13,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier, XGBRegressor
 
+from comparison.comparison_datasets import ComparisonDataset, TaskName
+
 CATEGORICAL_FEATURE = "categorical_feature"
 FIT_PARAMS = "fit_params"
 DEFAULT_PARAMETERS = "default_parameters"
 TRAINING_TIME = "training_time"
 MODEL_SCORE = "model_score"
-
-
-class TaskName(str, Enum):
-    CLASSIFICATION = "classification"
-    REGRESSION = "regression"
 
 
 class ModelName(str, Enum):
@@ -38,14 +35,12 @@ class ModelComparison:
     unknown_numeric_value = -1
 
     def __init__(self,
-                 task_name: TaskName,
-                 cross_validation_n_folds: int,
-                 features: pd.DataFrame,
-                 target: pd.Series,
+                 comparison_dataset: ComparisonDataset,
                  max_parameters_to_test_in_tuning: int = 25):
         self.max_parameters_to_test_in_tuning = max_parameters_to_test_in_tuning
-        self.task_name = task_name
-        self.cross_validation_n_folds = cross_validation_n_folds
+        self.task_name = comparison_dataset.task
+        self.cross_validation_n_folds = comparison_dataset.cross_validation_n_folds
+        features = comparison_dataset.features
         numeric_features = set(features.select_dtypes("number").columns)
         self.categorical_features = list(set(features.columns) - numeric_features)
         self.categorical_features_indices = list(np.where(features.columns.isin(self.categorical_features))[0])
@@ -53,12 +48,13 @@ class ModelComparison:
         features_with_encoded_dates = self._encode_date_columns_as_int(features)
         self.preprocessed_features = self._encode_features(features_with_encoded_dates, numeric_features)
 
+        target = comparison_dataset.target
         if is_numeric_dtype(target):
             self.target = target
         else:
             self.target = LabelEncoder().fit_transform(target)
 
-    def _encode_features(self, features: pd.DataFrame, numeric_features: List) -> pd.DataFrame:
+    def _encode_features(self, features: pd.DataFrame, numeric_features: Set) -> pd.DataFrame:
         encoded_categorical_features = {
             categorical_feature:
                 LabelEncoder().fit_transform(features[categorical_feature].astype(str).fillna(self.unknown_category))

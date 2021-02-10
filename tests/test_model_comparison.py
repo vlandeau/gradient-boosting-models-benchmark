@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 from hamcrest import assert_that, is_
 
-from comparison.model_comparison import ModelComparison, TaskName, MODEL_SCORE
+from comparison.comparison_datasets import ComparisonDataset, TaskName
+from comparison.model_comparison import ModelComparison, MODEL_SCORE
 
 
 n_samples = 20
@@ -16,10 +17,10 @@ def test_model_comparison_give_non_null_performance_with_regression():
     features = pd.DataFrame({
         "numeric_feature": np.random.normal(size=n_samples)
     })
+    comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, numerical_target, cross_validation_n_folds)
 
     # When
-    model_comparison = ModelComparison(TaskName.REGRESSION, cross_validation_n_folds, features, numerical_target)
-    comparison = model_comparison.get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -34,10 +35,10 @@ def test_model_comparison_give_non_null_performance_and_categorical_feature():
         "string_feature": np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples),
         "numeric_feature": np.random.normal(size=n_samples)
     }, dtype="category")
+    comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
 
     # When
-    model_comparison = ModelComparison(TaskName.REGRESSION, cross_validation_n_folds, features, numerical_target)
-    comparison = model_comparison.get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -51,10 +52,10 @@ def test_model_comparison_give_non_null_performance_with_classification():
     features = pd.DataFrame({
         "numeric_feature": np.random.normal(size=n_samples)
     })
+    comparison_dataset = ComparisonDataset(TaskName.CLASSIFICATION, features, categorical_target, cross_validation_n_folds)
 
     # When
-    model_comparison = ModelComparison(TaskName.CLASSIFICATION, cross_validation_n_folds, features, categorical_target)
-    comparison = model_comparison.get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -68,10 +69,10 @@ def test_model_comparison_give_non_null_performance_with_null_numerical_feature(
     features = pd.DataFrame({
         "numeric_feature": list(np.random.normal(size=n_samples - 1)) + [None]
     })
+    comparison_dataset = ComparisonDataset(TaskName.CLASSIFICATION, features, categorical_target, cross_validation_n_folds)
 
     # When
-    model_comparison = ModelComparison(TaskName.CLASSIFICATION, cross_validation_n_folds, features, categorical_target)
-    comparison = model_comparison.get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -85,10 +86,10 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
     features = pd.DataFrame({
         "string_feature": list(np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples - 1)) + [None],
     }, dtype="category")
+    comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
 
     # When
-    model_comparison = ModelComparison(TaskName.REGRESSION, cross_validation_n_folds, features, numerical_target)
-    comparison = model_comparison.get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
