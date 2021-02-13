@@ -35,5 +35,5 @@ if __name__ == "__main__":
     tuned_perf_comparisons = {dataset_name: get_comparison_tuned_models(comparison_datasets[dataset_name], dataset_name)
                               for dataset_name in tqdm(comparison_datasets.keys(),
                                                        desc="Comparison of models with tuned hyperparameters")}
-    with open("tuned_perf_comparisons.json", "w") as tuned_performances_output_stream:
-        json.dump(perf_comparisons, tuned_performances_output_stream)
+    with open("tuned_perf_comparison.json", "w") as tuned_performances_output_stream:
+        json.dump(tuned_perf_comparisons, tuned_performances_output_stream)
