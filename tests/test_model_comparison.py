@@ -20,7 +20,7 @@ def test_model_comparison_give_non_null_performance_with_regression():
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, numerical_target, cross_validation_n_folds)
 
     # When
-    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -38,7 +38,7 @@ def test_model_comparison_give_non_null_performance_and_categorical_feature():
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
 
     # When
-    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -52,10 +52,11 @@ def test_model_comparison_give_non_null_performance_with_classification():
     features = pd.DataFrame({
         "numeric_feature": np.random.normal(size=n_samples)
     })
-    comparison_dataset = ComparisonDataset(TaskName.CLASSIFICATION, features, categorical_target, cross_validation_n_folds)
+    comparison_dataset = ComparisonDataset(TaskName.CLASSIFICATION, features, categorical_target,
+                                           cross_validation_n_folds)
 
     # When
-    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -69,10 +70,11 @@ def test_model_comparison_give_non_null_performance_with_null_numerical_feature(
     features = pd.DataFrame({
         "numeric_feature": list(np.random.normal(size=n_samples - 1)) + [None]
     })
-    comparison_dataset = ComparisonDataset(TaskName.CLASSIFICATION, features, categorical_target, cross_validation_n_folds)
+    comparison_dataset = ComparisonDataset(TaskName.CLASSIFICATION, features, categorical_target,
+                                           cross_validation_n_folds)
 
     # When
-    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -89,7 +91,7 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
 
     # When
-    comparison = ModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
+    comparison = ModelComparison(comparison_dataset).get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():

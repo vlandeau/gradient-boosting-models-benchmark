@@ -19,7 +19,7 @@ def test_model_comparison_give_non_null_performance_with_regression_and_numerial
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, numerical_target, cross_validation_n_folds)
 
     # When
-    comparison = TunedModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
+    comparison = TunedModelComparison(comparison_dataset).get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -37,7 +37,7 @@ def test_model_comparison_give_non_null_performance_with_regression_and_categori
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, numerical_target, cross_validation_n_folds)
 
     # When
-    comparison = TunedModelComparison(comparison_dataset).get_default_models_scores_and_training_time()
+    comparison = TunedModelComparison(comparison_dataset).get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():

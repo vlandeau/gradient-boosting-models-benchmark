@@ -1,6 +1,6 @@
 import time
 from typing import Dict
-
+import pandas as pd
 import numpy as np
 import optuna
 from optuna import Trial
@@ -26,11 +26,11 @@ class TunedModelComparison(ModelComparison):
         def objective(trial: Trial) -> float:
             grid_params: Dict = TuningParameters().get_model_params(model_name)(trial)
             model.set_params(**grid_params)
-            return np.mean(cross_val_score(model,
-                                           self.preprocessed_features, self.target,
-                                           n_jobs=4,
-                                           cv=KFold(self.cross_validation_n_folds,
-                                                    shuffle=True)))
+            cross_val_scores = cross_val_score(model, self.preprocessed_features, self.target, n_jobs=4,
+                                               cv=KFold(self.cross_validation_n_folds, shuffle=True))
+            if pd.isnull(cross_val_scores).any():
+                return np.inf
+            return np.mean(cross_val_scores)
 
         study = optuna.create_study(direction="maximize")
         try:

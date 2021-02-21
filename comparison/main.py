@@ -13,14 +13,14 @@ def get_comparison_default_models(dataset_infos: ComparisonDataset, dataset_name
         -> Dict[ModelName, Dict[str, object]]:
     print(f"Processing {dataset_name} dataset")
     comparison = ModelComparison(dataset_infos)
-    return comparison.get_default_models_scores_and_training_time()
+    return comparison.get_models_scores_and_training_time()
 
 
 def get_comparison_tuned_models(dataset_infos: ComparisonDataset, dataset_name: str) \
         -> Dict[ModelName, Dict[str, object]]:
     print(f"Processing {dataset_name} dataset")
     comparison = TunedModelComparison(dataset_infos)
-    return comparison.get_default_models_scores_and_training_time()
+    return comparison.get_models_scores_and_training_time()
 
 
 if __name__ == "__main__":

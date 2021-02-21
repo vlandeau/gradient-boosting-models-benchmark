@@ -64,7 +64,7 @@ class ModelComparison:
             .fillna({numeric_feature: self.unknown_numeric_value
                      for numeric_feature in numeric_features})
 
-    def get_default_models_scores_and_training_time(self) -> Dict[ModelName, Dict[str, object]]:
+    def get_models_scores_and_training_time(self) -> Dict[ModelName, Dict[str, object]]:
         return {model_name: self._get_default_model_score_and_training_time(model_name)
                 for model_name in self.models_to_compare.keys()}
 
