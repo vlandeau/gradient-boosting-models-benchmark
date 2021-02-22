@@ -29,7 +29,7 @@ class TunedModelComparison(ModelComparison):
             cross_val_scores = cross_val_score(model, self.preprocessed_features, self.target, n_jobs=4,
                                                cv=KFold(self.cross_validation_n_folds, shuffle=True))
             if pd.isnull(cross_val_scores).any():
-                return np.inf
+                return - np.inf
             return np.mean(cross_val_scores)
 
         study = optuna.create_study(direction="maximize")
