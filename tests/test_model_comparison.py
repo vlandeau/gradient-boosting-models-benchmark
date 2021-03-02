@@ -34,7 +34,7 @@ def test_model_comparison_give_non_null_performance_and_categorical_feature():
     features = pd.DataFrame({
         "string_feature": np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples),
         "numeric_feature": np.random.normal(size=n_samples)
-    }, dtype="category")
+    })
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
 
     # When
@@ -87,7 +87,7 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
     # Given
     features = pd.DataFrame({
         "string_feature": list(np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples - 1)) + [None],
-    }, dtype="category")
+    }, dtype="object")
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
 
     # When
