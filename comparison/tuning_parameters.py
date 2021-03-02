@@ -12,7 +12,8 @@ class TuningParameters:
             ModelName.CATBOOST: self.get_catboost_params(f"{ModelName.CATBOOST.value}__"),
             ModelName.XGBOOST: self.get_xgboost_params(f"{ModelName.XGBOOST.value}__"),
             ModelName.LIGHTGBM: self.get_lightgbm_params(f"{ModelName.LIGHTGBM.value}__"),
-            ModelName.LIGHTGBM_WITH_CATBOOST_ENCODER: self.get_lightgbm_params(f"{ModelName.LIGHTGBM.value}__")
+            ModelName.LIGHTGBM_WITH_CATBOOST_ENCODER: self.get_lightgbm_params(f"{ModelName.LIGHTGBM.value}__"),
+            ModelName.XGBOOST_WITH_CATBOOST_ENCODER: self.get_xgboost_params(f"{ModelName.XGBOOST.value}__")
         }[model_name]
 
     @staticmethod

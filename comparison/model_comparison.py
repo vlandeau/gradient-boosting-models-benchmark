@@ -27,6 +27,7 @@ class ModelName(str, Enum):
     XGBOOST = "xgboost"
     LIGHTGBM = "lightgbm"
     LIGHTGBM_WITH_CATBOOST_ENCODER = "lightgbm_with_catboost_encoder"
+    XGBOOST_WITH_CATBOOST_ENCODER = "xgboost_with_catboost_encoder"
     CATBOOST_ENCODER = "catboost_encoder"
 
 
@@ -109,8 +110,16 @@ class ModelComparison:
                      (ModelName.LIGHTGBM.value, LGBMClassifier())]),
                 TaskName.REGRESSION: Pipeline([(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder(cols=self.categorical_features,
                                                                                                   verbose=-1)),
-                                               (ModelName.LIGHTGBM.value, LGBMRegressor())]),
-                FIT_PARAMS: {lightgbm_step_categorical_features_params: self.categorical_features}
+                                               (ModelName.LIGHTGBM.value, LGBMRegressor())])
+            },
+            ModelName.XGBOOST_WITH_CATBOOST_ENCODER: {
+                TaskName.CLASSIFICATION: Pipeline(
+                    [(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder(cols=self.categorical_features,
+                                                                        verbose=0)),
+                     (ModelName.XGBOOST.value, XGBClassifier())]),
+                TaskName.REGRESSION: Pipeline([(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder(cols=self.categorical_features,
+                                                                                                  verbose=-1)),
+                                               (ModelName.XGBOOST.value, XGBRegressor())])
             },
             ModelName.XGBOOST: {
                 TaskName.CLASSIFICATION: Pipeline([(ModelName.XGBOOST.value, XGBClassifier())]),

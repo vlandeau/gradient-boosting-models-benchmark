@@ -28,11 +28,6 @@ def get_comparison_datasets() -> Dict[str, ComparisonDataset]:
                                                            california_housing.target,
                                                            4)
 
-    covtype_features, covtype_target = datasets.fetch_covtype(return_X_y=True)
-    datasets_information['covtype'] = ComparisonDataset(TaskName.CLASSIFICATION,
-                                                        DataFrame(covtype_features),
-                                                        Series(covtype_target),
-                                                        2)
     adult = datasets.fetch_openml('adult', as_frame=True)
     datasets_information['adult'] = ComparisonDataset(TaskName.CLASSIFICATION,
                                                       adult.data,
