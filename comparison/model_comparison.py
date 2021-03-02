@@ -8,17 +8,18 @@ from catboost import CatBoostClassifier, CatBoostRegressor
 from category_encoders import CatBoostEncoder, OrdinalEncoder
 from lightgbm import LGBMClassifier, LGBMRegressor
 from pandas.core.dtypes.common import is_numeric_dtype
-from sklearn.model_selection import cross_val_score, KFold
+from sklearn.model_selection import cross_validate, KFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier, XGBRegressor
-
+from sklearn.utils import shuffle
 from comparison.comparison_datasets import ComparisonDataset, TaskName
 
 CATEGORICAL_FEATURE = "categorical_feature"
 FIT_PARAMS = "fit_params"
 DEFAULT_PARAMETERS = "default_parameters"
 TRAINING_TIME = "training_time"
+PREDICTION_TIME = "prediction_time"
 MODEL_SCORE = "model_score"
 
 
@@ -34,7 +35,6 @@ class ModelName(str, Enum):
 
 class ModelComparison:
     unknown_category = "Unknown category"
-    unknown_numeric_value = -1
 
     def __init__(self,
                  comparison_dataset: ComparisonDataset,
@@ -48,16 +48,18 @@ class ModelComparison:
         self.categorical_features_indices = list(np.where(features.columns.isin(self.categorical_features))[0])
 
         features_with_encoded_dates = self._encode_date_columns_as_int(features)
-        self.preprocessed_features = features_with_encoded_dates.assign(**{
+        preprocessed_features = features_with_encoded_dates.assign(**{
             categorical_feature: features_with_encoded_dates[categorical_feature].astype("object").fillna(self.unknown_category)
             for categorical_feature in self.categorical_features
         })
 
-        target = comparison_dataset.target
-        if is_numeric_dtype(target):
-            self.target = target
+        shuffled_features, shuffled_target = shuffle(preprocessed_features, comparison_dataset.target)
+        self.preprocessed_features = shuffled_features
+
+        if is_numeric_dtype(shuffled_target):
+            self.target = shuffled_target
         else:
-            self.target = LabelEncoder().fit_transform(target)
+            self.target = LabelEncoder().fit_transform(shuffled_target)
 
     def get_models_scores_and_training_time(self) -> Dict[ModelName, Dict[str, object]]:
         return {model_name: self._get_default_model_score_and_training_time(model_name)
@@ -66,17 +68,14 @@ class ModelComparison:
     def _get_default_model_score_and_training_time(self, model_name: ModelName) -> Dict[str, object]:
         model = self.models_to_compare[model_name][self.task_name]
 
-        start_time = time.time()
-        cross_val_scores = cross_val_score(model,
+        cross_val_results = cross_validate(model,
                                            self.preprocessed_features,
                                            self.target,
-                                           cv=KFold(self.cross_validation_n_folds,
-                                                    shuffle=True),
-                                           n_jobs=-1,
-                                           fit_params=self.models_to_compare[model_name].get(FIT_PARAMS, None))
-        end_time = time.time()
-        return {MODEL_SCORE: np.mean(cross_val_scores),
-                TRAINING_TIME: end_time - start_time}
+                                           cv=self.cross_validation_n_folds,
+                                           n_jobs=-1)
+        return {MODEL_SCORE: np.mean(cross_val_results["test_score"]),
+                TRAINING_TIME: np.mean(cross_val_results["fit_time"]),
+                PREDICTION_TIME: np.mean(cross_val_results["score_time"])}
 
     @property
     def models_to_compare(self) -> Dict[ModelName, Dict]:
@@ -101,20 +100,18 @@ class ModelComparison:
             },
             ModelName.LIGHTGBM_WITH_CATBOOST_ENCODER: {
                 TaskName.CLASSIFICATION: Pipeline(
-                    [(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder(cols=self.categorical_features,
-                                                                        verbose=0)),
+                    [(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder()),
                      (ModelName.LIGHTGBM.value, LGBMClassifier())]),
                 TaskName.REGRESSION: Pipeline(
-                    [(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder(cols=self.categorical_features,
-                                                                        verbose=-1)),
+                    [(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder()),
                      (ModelName.LIGHTGBM.value, LGBMRegressor())])
             },
             ModelName.XGBOOST_WITH_CATBOOST_ENCODER: {
                 TaskName.CLASSIFICATION: Pipeline(
-                    [(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder(cols=self.categorical_features, verbose=0)),
+                    [(ModelName.CATBOOST_ENCODER.value, CatBoostEncoder()),
                      (ModelName.XGBOOST.value, XGBClassifier())]),
                 TaskName.REGRESSION: Pipeline([
-                    (ModelName.CATBOOST_ENCODER.value, CatBoostEncoder(cols=self.categorical_features, verbose=-1)),
+                    (ModelName.CATBOOST_ENCODER.value, CatBoostEncoder()),
                     (ModelName.XGBOOST.value, XGBRegressor())])
             },
             ModelName.XGBOOST: {
