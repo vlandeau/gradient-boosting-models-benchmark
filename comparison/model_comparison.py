@@ -47,8 +47,11 @@ class ModelComparison:
         self.categorical_features = list(set(features.columns) - numeric_features)
         self.categorical_features_indices = list(np.where(features.columns.isin(self.categorical_features))[0])
 
-        self.preprocessed_features = self._encode_date_columns_as_int(features)\
-            .fillna(value={col: self.unknown_category for col in self.categorical_features}, axis=0)
+        features_with_encoded_dates = self._encode_date_columns_as_int(features)
+        self.preprocessed_features = features_with_encoded_dates.assign(**{
+            categorical_feature: features_with_encoded_dates[categorical_feature].astype("object").fillna(self.unknown_category)
+            for categorical_feature in self.categorical_features
+        })
 
         target = comparison_dataset.target
         if is_numeric_dtype(target):

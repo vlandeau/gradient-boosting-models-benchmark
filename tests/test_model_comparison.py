@@ -87,6 +87,23 @@ def test_model_comparison_give_non_null_performance_with_null_categorical_featur
     # Given
     features = pd.DataFrame({
         "string_feature": list(np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples - 1)) + [None],
+    }, dtype="category")
+    comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
+
+    # When
+    comparison = ModelComparison(comparison_dataset).get_models_scores_and_training_time()
+
+    # Then
+    for model_name, performance_and_training_time in comparison.items():
+        performance = performance_and_training_time[MODEL_SCORE]
+        assert_that(~np.isnan(performance),
+                    reason=f"Null performance value for model {model_name}")
+
+
+def test_model_comparison_give_non_null_performance_with_null_object_feature():
+    # Given
+    features = pd.DataFrame({
+        "string_feature": list(np.random.choice(["Paris", "London", "Madrid", "Roma"], n_samples - 1)) + [None],
     }, dtype="object")
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, categorical_target, cross_validation_n_folds)
 
