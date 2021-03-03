@@ -66,7 +66,7 @@ class ModelComparison:
             self.target = LabelEncoder().fit_transform(shuffled_target)
 
     def get_models_scores_and_training_time(self) -> Dict[ModelName, Dict[str, object]]:
-        return {model_name: self._get_default_model_score_and_training_time(model_name)
+        return {model_name.value: self._get_default_model_score_and_training_time(model_name)
                 for model_name in self.models_to_compare.keys()}
 
     def _get_default_model_score_and_training_time(self, model_name: ModelName) -> Dict[str, object]:
@@ -77,13 +77,13 @@ class ModelComparison:
                                            self.target,
                                            cv=self.cross_validation_n_folds,
                                            n_jobs=-1)
-        return {MODEL_SCORE: np.mean(cross_val_results["test_score"]),
-                TRAINING_TIME: np.mean(cross_val_results["fit_time"]),
-                PREDICTION_TIME: np.mean(cross_val_results["score_time"]),
-                DATASET_LENGTH: len(self.preprocessed_features),
-                NUM_FEATURES: len(self.preprocessed_features.columns),
-                NUM_CATEGORICAL_FEATURES: len(self.categorical_features),
-                NUM_CATEGORIES: self.preprocessed_features[self.categorical_features].nunique().sum()}
+        return {MODEL_SCORE: float(np.mean(cross_val_results["test_score"])),
+                TRAINING_TIME: float(np.mean(cross_val_results["fit_time"])),
+                PREDICTION_TIME: float(np.mean(cross_val_results["score_time"])),
+                DATASET_LENGTH: int(len(self.preprocessed_features)),
+                NUM_FEATURES: int(len(self.preprocessed_features.columns)),
+                NUM_CATEGORICAL_FEATURES: int(len(self.categorical_features)),
+                NUM_CATEGORIES: int(self.preprocessed_features[self.categorical_features].nunique().sum())}
 
     @property
     def models_to_compare(self) -> Dict[ModelName, Dict]:
