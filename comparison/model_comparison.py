@@ -15,6 +15,10 @@ from xgboost import XGBClassifier, XGBRegressor
 from sklearn.utils import shuffle
 from comparison.comparison_datasets import ComparisonDataset, TaskName
 
+NUM_CATEGORIES = "num_categories"
+NUM_CATEGORICAL_FEATURES = "num_categorical_features"
+NUM_FEATURES = "num_features"
+DATASET_LENGTH = "dataset_length"
 CATEGORICAL_FEATURE = "categorical_feature"
 FIT_PARAMS = "fit_params"
 DEFAULT_PARAMETERS = "default_parameters"
@@ -42,12 +46,12 @@ class ModelComparison:
         self.max_parameters_to_test_in_tuning = max_parameters_to_test_in_tuning
         self.task_name = comparison_dataset.task
         self.cross_validation_n_folds = comparison_dataset.cross_validation_n_folds
-        features = comparison_dataset.features
-        numeric_features = set(features.select_dtypes("number").columns)
-        self.categorical_features = list(set(features.columns) - numeric_features)
-        self.categorical_features_indices = list(np.where(features.columns.isin(self.categorical_features))[0])
 
-        features_with_encoded_dates = self._encode_date_columns_as_int(features)
+        features_with_encoded_dates = self._encode_date_columns_as_int(comparison_dataset.features)
+        numeric_features = set(features_with_encoded_dates.select_dtypes("number").columns)
+        self.categorical_features = list(set(features_with_encoded_dates.columns) - numeric_features)
+        self.categorical_features_indices = list(np.where(features_with_encoded_dates.columns.isin(self.categorical_features))[0])
+
         preprocessed_features = features_with_encoded_dates.assign(**{
             categorical_feature: features_with_encoded_dates[categorical_feature].astype("object").fillna(self.unknown_category)
             for categorical_feature in self.categorical_features
@@ -75,7 +79,11 @@ class ModelComparison:
                                            n_jobs=-1)
         return {MODEL_SCORE: np.mean(cross_val_results["test_score"]),
                 TRAINING_TIME: np.mean(cross_val_results["fit_time"]),
-                PREDICTION_TIME: np.mean(cross_val_results["score_time"])}
+                PREDICTION_TIME: np.mean(cross_val_results["score_time"]),
+                DATASET_LENGTH: len(self.preprocessed_features),
+                NUM_FEATURES: len(self.preprocessed_features.columns),
+                NUM_CATEGORICAL_FEATURES: len(self.categorical_features),
+                NUM_CATEGORIES: self.preprocessed_features[self.categorical_features].nunique().sum()}
 
     @property
     def models_to_compare(self) -> Dict[ModelName, Dict]:

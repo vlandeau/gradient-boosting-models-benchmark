@@ -12,7 +12,7 @@ class TaskName(str, Enum):
 
 
 @dataclass
-class ComparisonDataset():
+class ComparisonDataset:
     task: TaskName
     features: DataFrame
     target: Series
