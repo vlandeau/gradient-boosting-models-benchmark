@@ -41,9 +41,7 @@ class ModelComparison:
     unknown_category = "Unknown category"
 
     def __init__(self,
-                 comparison_dataset: ComparisonDataset,
-                 max_parameters_to_test_in_tuning: int = 25):
-        self.max_parameters_to_test_in_tuning = max_parameters_to_test_in_tuning
+                 comparison_dataset: ComparisonDataset):
         self.task_name = comparison_dataset.task
         self.cross_validation_n_folds = comparison_dataset.cross_validation_n_folds
 

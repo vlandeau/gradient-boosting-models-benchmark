@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 from hamcrest import assert_that
 
 from comparison.comparison_datasets import ComparisonDataset, TaskName
@@ -19,7 +19,10 @@ def test_model_comparison_give_non_null_performance_with_regression_and_numerial
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, numerical_target, cross_validation_n_folds)
 
     # When
-    comparison = TunedModelComparison(comparison_dataset).get_models_scores_and_training_time()
+    model_comparison = TunedModelComparison(comparison_dataset,
+                                            max_parameters_to_test_in_tuning=5,
+                                            early_stopping_patience=1)
+    comparison = model_comparison.get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
@@ -37,7 +40,10 @@ def test_model_comparison_give_non_null_performance_with_regression_and_categori
     comparison_dataset = ComparisonDataset(TaskName.REGRESSION, features, numerical_target, cross_validation_n_folds)
 
     # When
-    comparison = TunedModelComparison(comparison_dataset).get_models_scores_and_training_time()
+    model_comparison = TunedModelComparison(comparison_dataset,
+                                            max_parameters_to_test_in_tuning=5,
+                                            early_stopping_patience=1)
+    comparison = model_comparison.get_models_scores_and_training_time()
 
     # Then
     for model_name, performance_and_training_time in comparison.items():
